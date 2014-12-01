@@ -1,0 +1,15 @@
+uwosh.bulletin -
+
+ 0.3
+
+    - Minor patches and code refactoring
+
+ 0.2
+
+    - Minor patches and code refactoring
+
+ 0.1 Unreleased
+
+    - Initial package structure.
+      [zopeskel]
+

@@ -1,0 +1,45 @@
+select#assocFaculty {
+ width: 228px;   
+}
+
+#facColOne {
+float: left;
+width: 50%;
+border-right: 1px groove;
+}
+
+#facColTwo {
+float: right;
+width: 49%;
+text-align:left;
+}
+
+#facultyEntry p {
+margin-top: 0px;
+}
+
+#facultyEntry h5 {
+margin: 0px;
+}
+
+#facultyEntry {
+margin-bottom: 3px;
+}
+
+dt.cbh {
+font-size:1.1em!important;
+margin-bottom:2px!important;
+}
+
+.template-bulletin_view .documentFirstHeading {
+text-decoration:underline;
+font-size: 14pt;
+}
+
+.template-bulletin_view .documentContent {
+width:auto!important;   
+}
+
+.template-bulletin_view .documentContent span {
+font-size:11pt;   
+}

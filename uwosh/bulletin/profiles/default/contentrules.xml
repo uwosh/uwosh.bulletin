@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<contentrules>
+ <rule name="move-faculty" 
+		title="Move Faculty to faculty folder"
+    description="This rule will automatically move all faculty to the faculty folder"
+    enabled="True" event="zope.app.container.interfaces.IObjectAddedEvent"
+    stop-after="False">
+  <conditions>
+   <condition type="plone.conditions.PortalType">
+    <property name="check_types">
+     <element>Faculty</element>
+    </property>
+   </condition>
+  </conditions>
+  <actions>
+   <action type="plone.actions.Move">
+    <property name="target_folder">/faculty-profiles</property>
+   </action>
+  </actions>
+ </rule>
+ <rule name="move-bulletins" 
+		title="Move Bulletins to bulletin folder"
+    description="This rule will automatically move all bulletins to the bulletins folder"
+    enabled="True" event="zope.app.container.interfaces.IObjectAddedEvent"
+    stop-after="False">
+  <conditions>
+   <condition type="plone.conditions.PortalType">
+    <property name="check_types">
+     <element>Bulletin</element>
+    </property>
+   </condition>
+  </conditions>
+  <actions>
+   <action type="plone.actions.Move">
+    <property name="target_folder">/bulletins</property>
+   </action>
+  </actions>
+ </rule>
+ <assignment name="move-faculty" bubbles="True" enabled="True" location=""/>
+ <assignment name="move-bulletins" bubbles="True" enabled="True" location=""/>
+</contentrules>

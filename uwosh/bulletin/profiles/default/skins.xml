@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<object name="portal_skins">
+   
+ <object name="bulletin_templates" meta_type="Filesystem Directory View"
+    directory="uwosh.bulletin:skins/bulletin_templates"/>
+
+ <object name="bulletin_images" meta_type="Filesystem Directory View"
+    directory="uwosh.bulletin:skins/bulletin_images"/>
+
+ <object name="bulletin_scripts" meta_type="Filesystem Directory View"
+    directory="uwosh.bulletin:skins/bulletin_scripts"/>
+
+ <object name="bulletin_styles" meta_type="Filesystem Directory View"
+    directory="uwosh.bulletin:skins/bulletin_styles"/>
+
+ <skin-path name="*">
+  <layer name="bulletin_templates" insert-after="custom"/>
+ </skin-path>
+ 
+ <skin-path name="*">
+  <layer name="bulletin_images" insert-after="bulletin_templates"/>
+ </skin-path>
+
+ <skin-path name="*">
+  <layer name="bulletin_scripts" insert-after="bulletin_images"/>
+ </skin-path>
+
+ <skin-path name="*">
+  <layer name="bulletin_styles" insert-after="bulletin_scripts"/>
+ </skin-path>
+ 
+</object>

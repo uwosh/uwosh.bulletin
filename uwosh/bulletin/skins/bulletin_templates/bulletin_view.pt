@@ -1,0 +1,135 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+  lang="en"
+  metal:use-macro="here/main_template/macros/master">
+
+<body>
+  <!--If template has no published items and user is Anonymous then return something else-->
+
+  <div metal:fill-slot="main">
+    <!--<div tal:condition="python: member is not None and not member.has_role('Anonymous')">-->
+    <!--<div tal:condition="not: here/portal_membership/isAnonymousUser">--> 
+    <div tal:replace="structure provider:plone.abovecontenttitle" />
+
+    <h1 class="documentFirstHeading">
+        <span tal:replace="here/Title|nothing">Title</span>
+    </h1>
+    
+    <p class="documentDescription"
+      tal:condition="here/Description"
+      tal:content="structure here/Description|nothing">
+      Description
+    </p>
+
+    <div tal:replace="structure provider:plone.abovecontentbody" />
+
+    <!--<tal:block define="toc here/getTOC;">--><!--not performing adapter lookup.. where to do this with an archetype?-->
+        <tal:block define="tocAdapter here/getTOCAdapter;
+                           toc tocAdapter/getTOC;">
+        <metal:recursion use-macro="here/bulletin-macros/macros/section_toc"/>
+            
+        <p class="visualNoPrint" tal:condition="nocall:toc">
+            <a href="" tal:attributes="href string:${context/absolute_url}/view-all-pages">
+            All content on one page</a>
+            (useful for printing, presentation mode etc.)
+        </p>
+      <hr />
+
+        <p tal:condition="not:nocall:toc" class="discreet">
+          <span
+                tal:omit-tag="">There are no pages or sections in this Bulletin</span>
+          <tal:block condition="python:user.has_permission('Modify portal content', here)">
+            Use the 'add new item' menu to add Colleges, Programs, Courses, Faculty, and InfoPages.
+            Place items within the Program they are relative too.
+          </tal:block>
+        </p>
+       
+    </tal:block>
+      <!--<tal:block define="toc here/getTOCAdapter;"><div tal:replace="toc"></div><div tal:replace="toc/getTOC|default">Can't get TOC</div></tal:block>-->
+
+
+          <tal:block define="items python:here.getFolderContents(contentFilter={'portal_type' : ('InfoPage')})">
+           <!--<fieldset tal:condition="nocall:items">-->
+               <dl tal:condition="nocall:items" class="collapsible collapsedOnLoad">
+               <!--<legend>Informational Documents</legend>-->
+		 <dt class="collapsibleHeader cbh">Informational Documents</dt>
+		 <dd class="collapsibleContent">
+               <ul class="visualNoMarker">
+               <tal:related tal:repeat="item items">
+                   <li tal:define="
+                           desc      item/Description;
+                           item_type item/portal_type;
+                           item_type_class python: 'contenttype-' + putils.normalizeString(item_type);
+                           item_wf_state       item/review_state|python: getInfoFor(item, 'review_state', '');
+                           item_wf_state_class python: 'state-' + putils.normalizeString(item_wf_state);
+                           item_url           item/getURL;">
+                       <span tal:attributes="class item_type_class">
+                       <a href="" class="visualIconPadding"
+                           tal:attributes="href  item_url;
+                                           title desc;"
+                           tal:content="item/pretty_title_or_id">
+                           Related Item
+                       </a>
+                       </span>
+                   </li>
+               </tal:related>
+           <!--</fieldset>-->
+		</dd>
+		</dl>
+      </tal:block> 
+    
+     <tal:block define="items python:here.getFolderContents(contentFilter={'portal_type' : ('Department')})">
+           <!--<fieldset tal:condition="nocall:items">-->
+               <dl tal:condition="nocall:items" class="collapsible collapsedOnLoad">
+               <!--<legend>College Information</legend>-->
+		 <dt class="collapsibleHeader cbh">Colleges</dt>
+		 <dd class="collapsibleContent">
+               <ul class="visualNoMarker">
+               <tal:related tal:repeat="item items">
+                   <li tal:define="
+                           desc      item/Description;
+                           item_type item/portal_type;
+                           item_type_class python: 'contenttype-' + putils.normalizeString(item_type);
+                           item_wf_state       item/review_state|python: getInfoFor(item, 'review_state', '');
+                           item_wf_state_class python: 'state-' + putils.normalizeString(item_wf_state);
+                           item_url           item/getURL;">
+                       <span tal:attributes="class item_type_class">
+                       <a href="" class="visualIconPadding"
+                           tal:attributes="href  item_url;
+                                           title desc;"
+                           tal:content="item/pretty_title_or_id">
+                           Related Item
+                       </a>
+                       </span>
+                   </li>
+               </tal:related>
+		</ul>
+           <!--</fieldset>-->
+		</dd>
+		</dl>
+      </tal:block>
+		
+<div tal:condition="python: hasattr(here, 'getAssocFacultyListing')">
+  <div tal:condition="python: hasattr(here.getAssocFacultyListing(), 'getAssocFacultyFL')">
+      <div tal:define="bulletinFaculty python: here.getAssocFacultyListing().getAssocFacultyFL()">
+          <dl class="collapsible collapsedOnLoad">
+              <dt class="collapsibleHeader cbh">Faculty Listing</dt>
+	      <dd class="collapsibleContent">
+		<ul>
+		<div tal:repeat="faculty bulletinFaculty">
+		<li> <a href="" tal:attributes="href faculty/absolute_url" tal:content="faculty/Title">Faculty Member</a></li>
+		</div>
+		</ul>
+	      </dd>	
+	  </dl>
+      </div>
+      </div>
+      </div>
+      
+
+
+    <div tal:replace="structure provider:plone.belowcontentbody" />
+<!--</div>TalConditionDiv-->
+
+  </div>
+</body>
+</html>

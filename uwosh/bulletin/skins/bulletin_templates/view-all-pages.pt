@@ -1,0 +1,49 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      lang="en"
+      metal:use-macro="here/main_template/macros/master">
+
+<body>
+
+<div metal:fill-slot="main">
+    <div metal:define-macro="main">
+      <div tal:define="reviewState python: here.portal_workflow.getInfoFor(here, 'review_state')">
+      <div tal:condition="python: reviewState == 'private' and here.portal_membership.isAnonymousUser()">You are not authorized to view this section of the bulletin...</div>
+      <div tal:condition="python: not reviewState == 'private' or not here.portal_membership.isAnonymousUser()">
+      <!--<div tal:define="toc python:here.getTOCAdapter().getTOC()">-->
+      <div tal:define="tocAdapter here/getTOCAdapter;
+		       toc tocAdapter/getTOC;">
+        <h1>
+            <span tal:replace="here/Title|nothing" />
+        </h1>
+
+        <p class="discreet visualNoPrint">
+            <a href="" tal:attributes="href here/absolute_url">&laquo; Return to page index</a>
+        </p>
+
+        <p class="documentDescription" 
+             tal:content="here/getDescription|nothing">
+            Bulletin Description
+        </p>
+
+	<div tal:condition="python:here.portal_type=='Program'"><div metal:use-macro="here/program_view/macros/program_macro"></div></div>
+
+
+           <metal:recursion
+                  use-macro="here/bulletin-macros/macros/section_collation"/>
+
+		     <div tal:condition="python: hasattr(here, 'getAssocFacultyListing')">
+		       <div tal:condition="python: hasattr(here.getAssocFacultyListing(), 'getAssocFacultyFL')">
+		     <div tal:define="rawFacultyListing python:here.getAssocFacultyListing().getAssocFacultyFL();
+		       facultyListing python:here.sortByKey(rawFacultyListing, 'title');
+		       facultyColumns python:here.getColumns(facultyListing)">
+           <span tal:condition="python:here.meta_type=='Bulletin'"><div metal:use-macro="here/bulletin-macros/macros/faculty_listing"></div></span></div></div></div>
+      </div>
+<div tal:replace="structure provider:plone.belowcontentbody" /><br />
+</div>
+</div>
+</div>
+  
+</div>
+
+</body></html>
+

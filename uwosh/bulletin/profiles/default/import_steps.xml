@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<import-steps>
+  <import-step id="uwosh.bulletin"
+               version="1"
+               handler="uwosh.bulletin.importexport.import_all"
+               title="uwosh.bulletin: miscellaneous import steps">
+    Various import steps that are not handled by GS import/export
+    handlers.
+	  <dependency step="content"/>
+  </import-step>
+
+</import-steps>

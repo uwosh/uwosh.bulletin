@@ -1,0 +1,12 @@
+  <configure
+      xmlns="http://namespaces.zope.org/zope"
+      xmlns:five="http://namespaces.zope.org/five"
+      >
+
+    <adapter
+      for="uwosh.bulletin.interfaces.ITOCRoot"
+      provides="uwosh.bulletin.interfaces.ITOCAdapter"
+      factory="uwosh.bulletin.bulletinadapters.TOCAdapter.TOCAdapter"
+      />
+
+  </configure>

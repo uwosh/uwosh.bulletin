@@ -1,0 +1,227 @@
+<!-- A section (or top-level) table-of-contents 
+    (titles + description, nested list)
+    
+    Call this with 'section' defined 
+  -->
+<metal:block define-macro="section_toc">
+    <!--<ol tal:condition="toc | nothing">-->
+     <ol tal:condition="nocall:toc">
+        <li tal:repeat="tocElement toc">
+            <tal:item define="item tocElement/item">
+                <div tal:condition="python: item.portal_type == 'Program'">
+                   <dl class="collapsible collapsedOnLoad">
+                      <dt class="collapsibleHeader cbh"><a href="" tal:attributes="href item/getURL"><span tal:replace="item/Title"/></a></dt>
+                         <dd class="collapsibleContent">
+                            <tal:block define="toc tocElement/children">
+                               <metal:recursion use-macro="here/bulletin-macros/macros/section_toc"/>
+                            </tal:block>
+                         </dd>
+
+                   </dl>
+                </div>
+
+                <div tal:condition="python: item.portal_type != 'Program'">
+                   <a href="" tal:attributes="href item/getURL">
+                      <span tal:content="item/Title" tal:attributes="class string:state-${item/review_state}"/></a>
+                         <tal:block define="toc tocElement/children">
+                            <metal:recursion use-macro="here/bulletin-macros/macros/section_toc"/>
+                         </tal:block>
+                </div>
+            </tal:item>
+</li>
+    </ol>
+</metal:block>
+
+<!-- Listing of all pages in a section
+
+    Call this with toc (top level list, as returned by getTOC()) defined
+    may need to remove nothings from item, itemObj, body
+  -->
+<metal:block define-macro="section_collation">
+    <tal:section repeat="section toc">
+        <div tal:define="item      section/item | nothing;
+                            itemObj   item/getObject | nothing;
+                            itemUrl   itemObj/absolute_url | nothing;
+                            body      itemObj/getText | nothing;
+                            numbering section/numbering;
+                            itemDepth section/depth;
+                            children  section/children;
+                            addImagePaths nocall:context/addImagePaths | nothing"
+            tal:attributes="class string:bulletinCollation depth-${itemDepth}">
+	    <div tal:condition="python:item.portal_type == 'Course'">
+            <!--<div tal:condition="python: hasattr(itemObj.getPreviousSibling(), 'portal_type')">
+            <div tal:condition="python: itemObj.getPreviousSibling().portal_type != 'Course'"><h1>Course Descriptions</h1></div>-->
+            <div tal:condition="python: itemObj.displayCDHeader()"><h1>Course Descriptions</h1></div>
+            <!--<div tal:condition="python: itemObj.getPreviousSibling() is None"><h1>Course Descriptions</h1></div>--><!--Just use string literal if this doesn't work-->
+            </div>
+            <h1>
+		
+               <!--<span tal:replace="numbering">1.</span>-->
+                <span tal:replace="item/Title">Section Title</span>
+            </h1>
+
+            <p class="documentDescription" tal:content="item/Description|nothing"><!--added /nothing-->
+                description
+            </p>
+    	    <div tal:condition="python: item.portal_type == 'InfoPage'">
+            <div tal:condition="nocall:body">
+                <tal:block condition="nocall:addImagePaths">
+                    <div tal:replace="structure python:addImagePaths(body, itemUrl)" />
+                </tal:block>
+                <tal:block condition="not: nocall:addImagePaths">
+                    <div tal:replace="structure body" />
+                </tal:block>
+	    </div>
+            </div>
+
+
+	    <div tal:condition="python: item.portal_type == 'Program'">
+
+	    <div metal:use-macro="here/program_view/macros/program_macro">
+	    <div metal:fill-slot="contactName" tal:replace="structure itemObj/contactName|nothing">Contact Name</div>
+	    <div metal:fill-slot="contactTitle" tal:replace="structure itemObj/contactTitle|nothing">Contact Title</div>
+	    <div metal:fill-slot="contactOffice" tal:replace="structure itemObj/contactOffice|nothing">Contact Office</div>
+	    <div metal:fill-slot="contactPhone" tal:replace="structure itemObj/contactPhone|nothing">Contact Phone</div>
+	    <div metal:fill-slot="contactSite" tal:replace="structure itemObj/contactSite|nothing">Contact Website</div>
+	    <div metal:fill-slot="contactEmail" tal:replace="structure itemObj/contactEmail|nothing">Contact Email</div>
+            <div metal:fill-slot="faculty"><div tal:define="faculty itemObj/assocFaculty|nothing">
+            <div tal:condition="faculty">
+            <tal:block tal:repeat="fac faculty">
+            <span tal:condition="not:repeat/fac/end"
+            tal:replace="string:${fac/Title}, "></span>      
+            <span tal:condition="repeat/fac/end"
+            tal:replace="string:${fac/Title}"></span>
+            </tal:block>
+            </div>
+            </div>
+            </div>
+
+	    <div metal:fill-slot="purpose" tal:replace="structure itemObj/purpose|nothing">Purpose</div>
+	    <div metal:fill-slot="degree" tal:replace="structure itemObj/degree|nothing">Degree</div>
+	    <div metal:fill-slot="additionalReq" tal:replace="structure itemObj/additionalReq|nothing">Additional Admissions Requirements Information</div>
+	    <div metal:fill-slot="sum_structure" tal:replace="structure itemObj/sum_structure|nothing">Structure</div>
+	    <div metal:fill-slot="sum_apos" tal:replace="structure itemObj/sum_apos|nothing">Academic Plans of Study</div>
+	    <div metal:fill-slot="sum_cr_req" tal:replace="structure itemObj/sum_cr_req|nothing">Minimum Unit (Cr.) Requirements</div>
+	    <div metal:fill-slot="sum_atc" tal:replace="structure itemObj/sum_atc|nothing">Admission to Candidacy</div>
+	    <div metal:fill-slot="sum_grad_req" tal:replace="structure itemObj/sum_grad_req|nothing">Graduation Requirements</div>
+	    <div metal:fill-slot="additional_sum_req" tal:replace="structure itemObj/additional_sum_req|nothing">Additional Summary Requirements</div>
+	    <div metal:fill-slot="degreeReq" tal:replace="structure itemObj/degreeReq|nothing">Degree Requirements</div>
+	    </div>
+	    </div>
+
+	    <div tal:condition="python: item.portal_type == 'Course'">
+	    <div metal:use-macro="here/course_view/macros/course_macro">
+	    <div metal:fill-slot="courseID" tal:replace="structure itemObj/courseID|nothing">Course ID</div>
+	    <div metal:fill-slot="title" tal:replace="structure itemObj/title|nothing">Course Title</div>
+	    <div metal:fill-slot="credits" tal:replace="structure itemObj/credits|nothing">Credits</div>
+	    <div metal:fill-slot="courseDesc" tal:replace="structure itemObj/courseDescription|nothing">Course Description</div>
+	    <div metal:fill-slot="coursePrereqs" tal:replace="structure itemObj/coursePrereqs|nothing">Course Prerequisites</div>
+	    </div>
+	    </div>
+
+            <tal:subsections define="toc children"
+                             condition="nocall:children">
+                <metal:recursion use-macro="here/bulletin-macros/macros/section_collation"/>
+            </tal:subsections>
+
+             </div> 
+
+    </tal:section>
+
+</metal:block>
+<!--Gets faculty listing from faculty folder-->
+<div metal:define-macro="faculty_listing">
+<h2 id="facHeading">Faculty Listing</h2>
+<div id="facultyColumns" tal:define="facColOne python:facultyColumns[0];
+		 facColTwo python:facultyColumns[1]">
+
+<div id="facColOne">
+<div tal:repeat="fac facColOne">
+<div id="facultyEntry"><h5 tal:content="fac/Title"></h5><span tal:replace="structure fac/degrees"></span></div>
+</div>
+</div>
+
+<div id="facColTwo">
+<div tal:repeat="fac facColTwo">
+<div id="facultyEntry"><h5 tal:content="fac/Title"></h5><span tal:replace="structure fac/degrees"></span></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- The navigation bar
+
+    Call this with tocInfo (as returned by getTOCInfo()) defined
+  -->
+<!--<div metal:define-macro="navigation_bar"
+    class="listingBar" 
+    tal:define="nextIdx tocInfo/nextIdx;
+                prevIdx tocInfo/prevIdx;
+                tocList tocInfo/tocList"
+    tal:condition="python: nextIdx or prevIdx">
+
+    <tal:next condition="nextIdx">
+        <a class="next"
+           tal:define="next python:tocList[nextIdx]['item']" 
+           tal:attributes="href next/getURL"
+           tabindex="1"
+           href="">
+            <span i18n:translate="phc_next">
+               Next:
+            </span>
+            <span tal:replace="next/Title" /> 
+            &#9658;
+       </a>   
+    </tal:next>
+       
+    <tal:prev condition="prevIdx">
+        <a class="previous"
+           tal:define="prev python:tocList[prevIdx]['item']" 
+           tal:attributes="href prev/getURL"
+           tabindex="1"
+           href="">
+            &#9668;
+            <span i18n:translate="phc_previous">
+               Previous:
+            </span>
+            <span tal:replace="prev/Title" /> 
+       </a>   
+    </tal:prev>	       
+</div>-->
+
+<!-- The "jump to" drop-down box
+    
+    Call this with tocList (as returned in tocInfo returned by getTOCInfo())
+    defined.
+  -->
+<div metal:define-macro="jump_box"
+    class="jumpBox">
+
+    <form method="get" action="#"
+          tal:attributes="action context/absolute_url">
+        <label for="destination" class="hiddenStructure">Jump to: </label>
+        <select name=":action" tabindex="3"
+                onchange="window.location.href=this.options[this.selectedIndex].value"
+                tal:attributes="tabindex tabindex/next|nothing">
+	    <option value="bulletin-all"
+		    title="Useful for printing, presentation mode etc.">
+	      All content on one page
+	    </option>
+            <option tal:repeat="tocItem tocList"
+                    tal:attributes="value tocItem/item/getURL;
+                                    selected python:tocItem['currentItem'] and 'selected' or nothing">
+                <span tal:replace="tocItem/numbering"/>
+                <span tal:replace="tocItem/item/Title"/>
+            </option>
+        </select>
+        <noscript>
+            <input class="standalone"
+                   type="submit"
+                   value="Go"
+                   i18n:attributes="value"
+                   tabindex="4"
+                   tal:attributes="tabindex tabindex/next|nothing" />
+        </noscript>
+    </form>
+</div>

@@ -1,0 +1,219 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone">
+
+  <head><title></title></head>
+
+  <metal:javascript_head fill-slot="javascript_head_slot">
+    <tal:block define="macro here/archetypes_custom_js/macros/javascript_head | nothing"
+               condition="macro">
+      <metal:block use-macro="macro" />
+    </tal:block>
+    <tal:comment replace="nothing">
+      Many of the following defines duplicated from the tal:defines in the
+      main slot. With base_edit, edit_macros could be reused as it was defined
+      for the entire document. base_view uses main_template and thus must
+      create additional defines for each slot it fills.
+    </tal:comment>
+    <tal:js define="fields python:here.Schema().viewableFields(here);
+                    js python:here.getUniqueWidgetAttr(fields, 'helper_js')"
+            condition="js"
+            repeat="item js">
+      <script type="text/javascript"
+              charset="iso-8859-1"
+              tal:condition="python:exists('portal/%s' % item)"
+              tal:attributes="src string:$portal_url/$item">
+      </script>
+    </tal:js>
+    <tal:block define="portal_type python:here.getPortalTypeName().lower().replace(' ', '_');
+                       view_template python:'%s_view' % portal_type;
+                       view_macros python:path('here/%s/macros|nothing' % view_template);
+                       macro view_macros/js | nothing"
+               condition="macro">
+      <metal:block use-macro="macro" />
+    </tal:block>
+  </metal:javascript_head>
+
+  <metal:css fill-slot="css_slot">
+    <tal:comment replace="nothing">
+      Many of the following defines duplicated from the tal:defines in the
+      main slot. With base_edit, edit_macros could be reused as it was defined
+      for the entire document. base_view uses main_template and thus must
+      create additional defines for each slot it fills.
+    </tal:comment>
+    <tal:css define="fields python:here.Schema().viewableFields(here);
+                     css python:here.getUniqueWidgetAttr(fields, 'helper_css')"
+             condition="css"
+             repeat="item css">
+      <style type="text/css"
+             media="all"
+             tal:condition="python:exists('portal/%s' % item)"
+             tal:content="structure string:<!-- @import url($portal_url/$item); -->">
+      </style>
+    </tal:css>
+    <tal:block define="portal_type python:here.getPortalTypeName().lower().replace(' ', '_');
+                       view_template python:'%s_view' % portal_type;
+                       view_macros python:path('here/%s/macros|nothing' % view_template);
+                       macro view_macros/css | nothing"
+               condition="macro">
+      <metal:block use-macro="macro" />
+    </tal:block>
+  </metal:css>
+
+  <body>
+    <metal:fill fill-slot="main">
+      <metal:main_macro define-macro="main"
+            tal:define="portal_type python:here.getPortalTypeName().lower().replace(' ', '_');
+            base_macros here/base/macros;
+            view_template python:'%s_view' % portal_type;
+            view_macros python:path('here/%s/macros|nothing' % view_template);
+            header_macro view_macros/header | header_macro | base_macros/header;
+            body_macro view_macros/body | body_macro | base_macros/body;
+            folderlisting_macro view_macros/folderlisting | folderlisting | base_macros/folderlisting;
+            footer_macro view_macros/footer | footer_macro | base_macros/footer;
+            errors python:request.get('errors', {})">
+
+       <metal:use_header use-macro="header_macro" />
+<div metal:define-macro="program_macro">
+<label class="formQuestion"><span>Program Contact Information</span></label><br/>
+<p metal:define-slot="contactName" tal:replace="structure here/contactName|itemObj/contactName|nothing">Contact Name</p><span tal:condition="here/contactName|itemObj/contactName" tal:on-error="nothing"><br /></span>
+<p metal:define-slot="contactTitle" tal:replace="structure here/contactTitle|itemObj/contactTitle|nothing">Contact Title</p><span tal:condition="here/contactTitle|itemObj/contactTitle" tal:on-error="nothing"><br /></span>
+<span tal:condition="here/contactOffice|itemObj/contactOffice" tal:on-error="nothing">Office: </span><p metal:define-slot="contactOffice" tal:replace="structure here/contactOffice|itemObj/contactOffice|nothing">Contact Title</p><span tal:condition="here/contactOffice|itemObj/contactOffice" tal:on-error="nothing"><br /></span>
+<span tal:condition="here/contactPhone|itemObj/contactPhone" tal:on-error="nothing">Telephone: </span><p metal:define-slot="contactPhone" tal:replace="structure here/contactPhone|itemObj/contactPhone|nothing">Contact Phone</p><span tal:condition="here/contactPhone|itemObj/contactPhone" tal:on-error="nothing"><br /></span>
+<span tal:condition="here/contactSite|itemObj/contactSite" tal:on-error="nothing">Web Site: </span><p metal:define-slot="contactSite" tal:replace="structure here/contactSite|itemObj/contactSite|nothing">Contact Website</p><span tal:condition="here/contactSite|itemObj/contactSite" tal:on-error="nothing"><br /></span>
+<span tal:condition="here/contactEmail|itemObj/contactEmail" tal:on-error="nothing">E-mail: </span><p metal:define-slot="contactEmail" tal:replace="structure here/contactEmail|itemObj/contactEmail|nothing">Contact E-mail</p><span tal:condition="here/contactEmail|itemObj/contactEmail" tal:on-error="nothing"><br /></span>
+<br />
+<label class="formQuestion"><span>I. Faculty</span></label><br/>
+<div metal:define-slot="faculty"><div tal:condition="python: here.widget('assocFaculty')"><div metal:use-macro="here/liveReference/macros/view">Faculty</div></div></div><br />
+
+
+<!--<span>Faculty(structure here/assocFaculty|nothing): </span>
+<div tal:define="assocFaculty python:here.getAssocFaculty()">
+    <div>Returning getAssocFaculty to see form that a reference field returns in:</div>
+  <hr />
+  <span tal:replace="assocFaculty"/>
+  <hr />
+<ul>
+  <li tal:repeat="fac assocFaculty">
+<a class="Faculty"
+   tal:attributes="href fac/absolute_url; class python:fac.portal_type.replace(' ', '_')"
+   tal:content="python:fac.Title() or fac.absolute_url(relative=1)"></a>
+</li>
+</ul>
+</div>-->
+
+  
+<label class="formQuestion"><span>II. Purpose</span></label><br/>
+<p metal:define-slot="purpose" tal:replace="structure here/purpose|itemObj/purpose|nothing">Purpose</p><br />
+<label class="formQuestion"><span>III. Degree</span></label><br/>
+<p metal:define-slot="degree" tal:replace="structure here/degree|itemObj/degree|nothing">Degree</p><br /><br />
+<label class="formQuestion"><span>IV. Additional Admissions Requirements Information</span></label><br/>
+<p metal:define-slot="additionalReq" tal:replace="structure here/additionalReq|itemObj/additionalReq|nothing">Additional Admissions Requirements Information</p><br />
+<label class="formQuestion"><span>V. Summary</span></label><br/><br />
+<div style="padding-left: 15px">
+<label class="formQuestion"><span>A. Structure</span></label><br/>
+<p metal:define-slot="sum_structure" tal:replace="structure here/sum_structure|itemObj/sum_structure|nothing">Structure</p><br /><br />
+<label class="formQuestion"><span>B. Academic Plans of Study</span></label><br/>
+<p metal:define-slot="sum_apos" tal:replace="structure here/sum_apos|itemObj/sum_apos|nothing">Academic Plans of Study</p><br /><br />
+<label class="formQuestion"><span>C. Minimum Unit (Cr.) Requirements</span></label><br/>
+<p metal:define-slot="sum_cr_req" tal:replace="structure here/sum_cr_req|itemObj/sum_cr_req|nothing">Minimum Unit (Cr.) Requirements</p><br /><br />
+<label class="formQuestion"><span>D. Admission to Candidacy</span></label><br/>
+<p metal:define-slot="sum_atc" tal:replace="structure here/sum_atc|itemObj/sum_atc|nothing">Admission to Candidacy</p><br /><br />
+<label class="formQuestion"><span>E. Graduation Requirements</span></label><br/>
+<p metal:define-slot="sum_grad_req" tal:replace="structure here/sum_grad_req|itemObj/sum_grad_req|nothing">Graduation Requirements</p>
+<br /><br />
+<span metal:define-slot="additional_sum_req" tal:replace="structure here/additional_sum_req|itemObj/additional_sum_req|nothing">Additional Summary Requirements</span>
+</div><br /><br />
+<label class="formQuestion"><span>VI. Degree Requirements</span></label><br/>
+<p metal:define-slot="degreeReq" tal:replace="structure here/degreeReq|itemObj/degreeReq|nothing">Degree Requirements</p><br />
+</div>
+
+        <br />
+        <label class="formQuestion">
+        <span>Additional Program Information</span>:
+        </label>
+
+<hr />
+
+    
+     <tal:block define="items python:here.getFolderContents(contentFilter={'portal_type' : ('Course')})">
+           <!--<fieldset tal:condition="nocall:items">-->
+               <dl tal:condition="nocall:items" class="collapsible collapsedOnLoad">
+               <!--<legend>VII. Course Descriptions</legend>-->
+	          <dt class="collapsibleHeader cbh">VII. Course Descriptions</dt>
+		  <dd class="collapsibleContent">
+               <ul class="visualNoMarker">
+               <tal:related tal:repeat="item items">
+                   <li tal:define="
+                           desc      item/Description;
+                           item_type item/portal_type;
+                           item_type_class python: 'contenttype-' + putils.normalizeString(item_type);
+                           item_wf_state       item/review_state|python: getInfoFor(item, 'review_state', '');
+                           item_wf_state_class python: 'state-' + putils.normalizeString(item_wf_state);
+                           item_url           item/getURL">
+                       <span tal:attributes="class item_type_class">
+                       <a href="" class="visualIconPadding"
+                           tal:attributes="href  item_url;
+                                           title desc"
+                           tal:content="item/pretty_title_or_id">
+                           Related Item
+                       </a>
+                       </span>
+                   </li>
+               </tal:related>
+		   </dd>
+	       </dl>
+           <!--</fieldset>-->
+	       <br />
+      </tal:block>
+
+          <tal:block define="items python:here.getFolderContents(contentFilter={'portal_type' : ('InfoPage')})">
+           <!--<fieldset tal:condition="nocall:items">-->
+               <dl tal:condition="nocall:items" class="collapsible collapsedOnLoad">
+               <!--<legend>Informational Documents</legend>-->
+	          <dt class="collapsibleHeader cbh">Informational Documents</dt>
+		  <dd class="collapsibleContent">
+               <ul class="visualNoMarker">
+               <tal:related tal:repeat="item items">
+                   <li tal:define="
+                           desc      item/Description;
+                           item_type item/portal_type;
+                           item_type_class python: 'contenttype-' + putils.normalizeString(item_type);
+                           item_wf_state       item/review_state|python: getInfoFor(item, 'review_state', '');
+                           item_wf_state_class python: 'state-' + putils.normalizeString(item_wf_state);
+                           item_url           item/getURL">
+                       <span tal:attributes="class item_type_class">
+                       <a href="" class="visualIconPadding"
+                           tal:attributes="href  item_url;
+                                           title desc"
+                           tal:content="item/pretty_title_or_id">
+                           Related Item
+                       </a>
+                       </span>
+                   </li>
+               </tal:related>
+		   </dd>
+		   </dl>
+           <!--</fieldset>-->
+      </tal:block> 
+
+    <tal:block define="tocAdapter here/getTOCAdapter;
+		       toc tocAdapter/getTOC;">
+        <p class="visualNoPrint" tal:condition="nocall:toc">
+            <a href="" tal:attributes="href string:${context/absolute_url}/view-all-pages">
+            All content on one page</a>
+            (useful for printing, presentation mode etc.)
+        </p>
+    </tal:block>	
+	
+        <metal:use_footer use-macro="footer_macro" />
+
+      </metal:main_macro>
+    </metal:fill>
+  </body>
+</html>

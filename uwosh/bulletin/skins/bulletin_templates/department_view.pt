@@ -1,0 +1,121 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+  lang="en"
+  metal:use-macro="here/main_template/macros/master">
+
+<body>
+
+  <div metal:fill-slot="main">
+
+    <div tal:replace="structure provider:plone.abovecontenttitle" />
+
+    <h1 class="documentFirstHeading">
+        <span tal:replace="here/Title|nothing">Title</span>
+    </h1>
+    
+    <p class="documentDescription"
+      tal:condition="here/Description"
+      tal:content="structure here/Description|nothing">
+      Description
+    </p>
+
+
+    <div tal:replace="structure provider:plone.abovecontentbody" />
+
+        <tal:block define="tocAdapter here/getTOCAdapter;
+                           toc tocAdapter/getTOC;">
+        
+
+        
+        <metal:recursion use-macro="here/bulletin-macros/macros/section_toc"/>
+           
+        <p class="visualNoPrint" tal:condition="nocall:toc">
+            <a href="" tal:attributes="href string:${context/absolute_url}/view-all-pages">
+            All content on one page</a>
+            (useful for printing, presentation mode etc.)
+        </p>
+
+        <p tal:condition="not:nocall:toc" class="discreet">
+          <span
+                tal:omit-tag="">There are no pages or sections in this College</span>
+          <tal:block condition="python:user.has_permission('Modify portal content', here)">
+            Use the 'add new item' menu to add Colleges, Programs, Courses, Faculty, and InfoPages.
+            Place items within the Program that they are relevant to.
+          </tal:block>
+        </p>
+       
+    </tal:block>
+
+
+              <br />
+        <label class="formQuestion">
+        <span tal:define="departmentTitle python:context.Title()" tal:content="python: 'Additional Information about %s' % (departmentTitle)">Additional Information about </span>:
+        </label>
+      <hr />
+
+
+          <tal:block define="items python:here.getFolderContents(contentFilter={'portal_type' : ('InfoPage')})">
+           <!--<fieldset tal:condition="nocall:items">-->
+               <dl tal:condition="nocall:items" class="collapsible collapsedOnLoad">
+               <!--<legend>Informational Documents</legend>-->
+		 <dt class="collapsibleHeader cbh">Informational Documents</dt>
+		 <dd class="collapsibleContent">
+               <ul class="visualNoMarker">
+               <tal:related tal:repeat="item items">
+                   <li tal:define="
+                           desc      item/Description;
+                           item_type item/portal_type;
+                           item_type_class python: 'contenttype-' + putils.normalizeString(item_type);
+                           item_wf_state       item/review_state|python: getInfoFor(item, 'review_state', '');
+                           item_wf_state_class python: 'state-' + putils.normalizeString(item_wf_state);
+                           item_url           item/getURL"><!--HERE-->
+                       <span tal:attributes="class item_type_class">
+                       <a href="" class="visualIconPadding"
+                           tal:attributes="href  item_url;
+                                           title desc"
+                           tal:content="item/pretty_title_or_id">
+                           Related Item
+                       </a>
+                       </span>
+                   </li>
+               </tal:related>
+		   </dd>
+	       </dl>	   
+           <!--</fieldset>-->
+      </tal:block> 
+    
+     <tal:block define="items python:here.getFolderContents(contentFilter={'portal_type' : ('Program')})">
+           <!--<fieldset tal:condition="nocall:items">-->
+	       <dl tal:condition="nocall:items" class="collapsible collapsedOnLoad">
+               <!--<legend>Programs</legend>-->
+	         <dt class="collapsibleHeader cbh">Programs</dt>
+		 <dd class="collapsibleContent">
+               <ul class="visualNoMarker">
+               <tal:related tal:repeat="item items">
+                   <li tal:define="
+                           desc      item/Description;
+                           item_type item/portal_type;
+                           item_type_class python: 'contenttype-' + putils.normalizeString(item_type);
+                           item_wf_state       item/review_state|python: getInfoFor(item, 'review_state', '');
+                           item_wf_state_class python: 'state-' + putils.normalizeString(item_wf_state);
+                           item_url           item/getURL">
+                       <span tal:attributes="class item_type_class">
+                       <a href="" class="visualIconPadding"
+                           tal:attributes="href  item_url;
+                                           title desc"
+                           tal:content="item/pretty_title_or_id">
+                           Related Item
+                       </a>
+                       </span>
+                   </li>
+               </tal:related>
+		   </dd>
+		   </dl>
+           <!--</fieldset>-->
+      </tal:block>
+		   
+
+    <div tal:replace="structure provider:plone.belowcontentbody" />
+
+  </div>
+</body>
+</html>

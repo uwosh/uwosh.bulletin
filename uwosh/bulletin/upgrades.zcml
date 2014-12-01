@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:gs="http://namespaces.zope.org/genericsetup"
+    i18n_domain="uwosh.bulletin">
+
+    <gs:upgradeStep
+        title="Upgrade uwosh.bulletin to 0.7"
+        description="uwosh.bulletin upgrade step"
+        source="*"
+        destination="0.7"
+        handler=".upgrades.upgrade_to_0_7"
+        profile="uwosh.bulletin:default"
+    />
+
+</configure>
